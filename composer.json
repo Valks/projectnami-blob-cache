@@ -1,5 +1,6 @@
 {
     "require": {
-        "microsoft/windowsazure": ">=0.4"
+        "microsoft/windowsazure": ">=0.4",
+        "microsoft/azure-storage": "*"
     }
 }
