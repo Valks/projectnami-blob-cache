@@ -1,13 +1,9 @@
 <?php
-$path = dirname(__FILE__) . '\library\dependencies';
 
-require_once 'library/WindowsAzure/WindowsAzure.php';
-
-set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+require_once 'vendor/autoload.php';
 
 use WindowsAzure\Common\ServicesBuilder;
-use WindowsAzure\Blob\Models\CreateBlobOptions;
-use WindowsAzure\Blob\Models\ListBlobsOptions;
+use WindowsAzure\Common\ServiceException;
 
 class PN_Blob_Cache_Handler {
 
