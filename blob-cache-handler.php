@@ -3,6 +3,8 @@
 require_once 'vendor/autoload.php';
 
 use WindowsAzure\Common\ServicesBuilder;
+use MicrosoftAzure\Storage\Blob\Models\CreateBlobOptions;
+use MicrosoftAzure\Storage\Blob\Models\ListBlobsOptions;
 use WindowsAzure\Common\ServiceException;
 
 class PN_Blob_Cache_Handler {
@@ -54,7 +56,6 @@ class PN_Blob_Cache_Handler {
 	}
 
 	public function pn_blob_cache_set( $key, $data, $expire, $headers ) {
-
 	    $options = new CreateBlobOptions();
 	
 	    //Set metadata and content-type for blob if header array was provided 
