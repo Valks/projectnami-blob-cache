@@ -66,7 +66,7 @@ class PN_BlobCache {
 		 * be desired. If any of the no-cache criteria are met,
 		 * just return and let WordPress do it's thing.
 		 */
-		if( $this->do_not_cache() )
+		if( $this->do_not_cache() ) 
 			return;
 
 		/*
@@ -262,8 +262,6 @@ class PN_BlobCache {
 	private function do_not_cache() {
 		if( defined( 'DONOTCACHEPAGE' ) )
 			return true;
-		else
-			print_r( $_GET[ 'DONOTCACHEPAGE' ] );
 		if( $this->user_logged_in() )
 			return true;
 		if( $this->user_is_commenter() )
@@ -399,7 +397,7 @@ class PN_BlobCache {
 		$overhead = $total_time - $duration;
 
 		if( ! empty( $this->cached_page_copy ) )
-			die( str_replace( '</head>', "<!-- Served by Project Nami Blob Cache in $duration seconds. URL = $this->url It's been $total_time seconds since the request began. Initial processing overhead is $overhead seconds. -->\n</head>", $this->cached_page_copy ) );
+			die( str_replace( '</title>', "</title>\n<!-- Served by Project Nami Blob Cache in $duration seconds. URL = $this->url It's been $total_time seconds since the request began. Initial processing overhead is $overhead seconds. -->", $this->cached_page_copy ) );
 	}
 
     public function handle_save_post( $post_id ){
@@ -431,7 +429,7 @@ class PN_BlobCache {
 		
 		$duration = round( microtime( true ) - $this->initial_timestamp, 3 );
         	
-		return str_replace( '</head>', "<!-- Page generated without caching in $duration seconds. -->\n</head>", $output_buffer );
+		return str_replace( '</title>', "</title>\n<!-- Page generated without caching in $duration seconds. -->", $output_buffer );
 	}
 
 	public function clear_page_cache_admin_bar_node() {
