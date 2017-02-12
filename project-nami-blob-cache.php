@@ -24,7 +24,7 @@ class PN_BlobCache {
 	private $default_cache_expiration = 300;
 
 	public function __construct() {
-
+		
 		/*
 		 * Set an initial timestamp once the plugin loads.
 		 * This will give us a rough estimate of when page loading began.
@@ -78,6 +78,14 @@ class PN_BlobCache {
 	}
 
     public function begin_buffer(){
+		/*
+		 * Check that constants by plugins aren't set to tell us
+		 * not to cache the output. Would do this earlier but
+		 * constants aren't initialised yet.
+		 */
+		if( $this->do_not_cache_constants() )
+			return;
+		
         ob_start( array( $this, 'handle_output_buffer' ) );
     }
 
@@ -272,6 +280,15 @@ class PN_BlobCache {
 			return false;
 	}
 
+	private function do_not_cache_constants() {
+		if( defined( 'DONOTCACHEPAGE' ) ) 
+			return true;
+		if( defined( 'DONOTCACHEOBJECT' ) )
+			return true;
+		else
+			return false;
+	}
+
 	private function is_cached() {
 		$pn_remote_cache = new PN_Blob_Cache_Handler( );
 
@@ -293,10 +310,6 @@ class PN_BlobCache {
 
 	private function should_not_cache() {
 		$should_not_cache = false;
-
-		$should_not_cache = defined( 'DONOTCACHEPAGE' );
-		if ( $should_not_cache )
-			return true;
 
 		$should_not_cache = preg_match( '/wp-admin/', $_SERVER[ 'REQUEST_URI' ] );
 
@@ -399,7 +412,7 @@ class PN_BlobCache {
 		$overhead = $total_time - $duration;
 
 		if( ! empty( $this->cached_page_copy ) )
-			die( str_replace( '</head>', "<!-- Served by Project Nami Blob Cache in $duration seconds. URL = $this->url It's been $total_time seconds since the request began. Initial processing overhead is $overhead seconds. -->\n</head>", $this->cached_page_copy ) );
+			die( str_replace( '</title>', "</title>\n<!-- Served by Project Nami Blob Cache in $duration seconds. URL = $this->url It's been $total_time seconds since the request began. Initial processing overhead is $overhead seconds. -->", $this->cached_page_copy ) );
 	}
 
     public function handle_save_post( $post_id ){
@@ -431,7 +444,7 @@ class PN_BlobCache {
 		
 		$duration = round( microtime( true ) - $this->initial_timestamp, 3 );
         	
-		return str_replace( '</head>', "<!-- Page generated without caching in $duration seconds. -->\n</head>", $output_buffer );
+		return str_replace( '</title>', "</title>\n<!-- Page generated without caching in $duration seconds. -->", $output_buffer );
 	}
 
 	public function clear_page_cache_admin_bar_node() {
