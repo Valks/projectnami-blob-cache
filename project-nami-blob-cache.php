@@ -24,7 +24,7 @@ class PN_BlobCache {
 	private $default_cache_expiration = 300;
 
 	public function __construct() {
-
+		
 		/*
 		 * Set an initial timestamp once the plugin loads.
 		 * This will give us a rough estimate of when page loading began.
@@ -66,7 +66,7 @@ class PN_BlobCache {
 		 * be desired. If any of the no-cache criteria are met,
 		 * just return and let WordPress do it's thing.
 		 */
-		if( $this->do_not_cache() ) 
+		if( $this->do_not_cache() )
 			return;
 
 		/*
@@ -78,6 +78,14 @@ class PN_BlobCache {
 	}
 
     public function begin_buffer(){
+		/*
+		 * Check that constants by plugins aren't set to tell us
+		 * not to cache the output. Would do this earlier but
+		 * constants aren't initialised yet.
+		 */
+		if( $this->do_not_cache_constants() )
+			return;
+		
         ob_start( array( $this, 'handle_output_buffer' ) );
     }
 
@@ -260,8 +268,6 @@ class PN_BlobCache {
 	}
 
 	private function do_not_cache() {
-		if( defined( 'DONOTCACHEPAGE' ) )
-			return true;
 		if( $this->user_logged_in() )
 			return true;
 		if( $this->user_is_commenter() )
@@ -269,6 +275,15 @@ class PN_BlobCache {
 		elseif( $this->should_not_cache() )
 			return true;
 		if( $this->is_current_url_cache_excluded() )
+			return true;
+		else
+			return false;
+	}
+
+	private function do_not_cache_constants() {
+		if( defined( 'DONOTCACHEPAGE' ) ) 
+			return true;
+		if( defined( 'DONOTCACHEOBJECT' ) )
 			return true;
 		else
 			return false;
