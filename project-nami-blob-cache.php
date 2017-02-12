@@ -260,6 +260,10 @@ class PN_BlobCache {
 	}
 
 	private function do_not_cache() {
+		if( defined( 'DONOTCACHEPAGE' ) )
+			return true;
+		else
+			print_r( $_GET[ 'DONOTCACHEPAGE' ] );
 		if( $this->user_logged_in() )
 			return true;
 		if( $this->user_is_commenter() )
@@ -293,10 +297,6 @@ class PN_BlobCache {
 
 	private function should_not_cache() {
 		$should_not_cache = false;
-
-		$should_not_cache = defined( 'DONOTCACHEPAGE' );
-		if ( $should_not_cache )
-			return true;
 
 		$should_not_cache = preg_match( '/wp-admin/', $_SERVER[ 'REQUEST_URI' ] );
 
