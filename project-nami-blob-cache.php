@@ -294,6 +294,10 @@ class PN_BlobCache {
 	private function should_not_cache() {
 		$should_not_cache = false;
 
+		$should_not_cache = defined( 'DONOTCACHEPAGE' );
+		if ( $should_not_cache )
+			return true;
+
 		$should_not_cache = preg_match( '/wp-admin/', $_SERVER[ 'REQUEST_URI' ] );
 
 		if( $should_not_cache )
